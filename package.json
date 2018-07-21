@@ -1,5 +1,5 @@
 {
-  "name": "stockPriceChecker",
+  "name": "Stock Price Checker",
   "version": "1.0.0",
   "description": "Stocker price checking application",
   "main": "server.js",
@@ -17,6 +17,7 @@
     "mongoose": "^5.2.4"
   },
   "devDependencies": {
+    "dotenv": "^6.0.0",
     "eslint": "^5.2.0"
   }
 }

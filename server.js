@@ -4,6 +4,7 @@ const routes = require('./routes')
 const bodyParser = require('body-parser')
 const helmet = require('helmet')
 const mongoose = require('mongoose')
+require('dotenv').config()
 const app = express()
 
 mongoose.connect(
