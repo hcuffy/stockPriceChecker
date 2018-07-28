@@ -4,7 +4,7 @@ const Schema = mongoose.Schema
 const StockSchema = new Schema(
 	{
 		ticker: String,
-		likes: String,
+		likes: Number,
 		uniqueIP: []
 	},
 	{ timestamps: true }
