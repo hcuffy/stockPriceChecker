@@ -1,41 +1,51 @@
 //const axios = require('axios')
 const Stock = require('../models/stock')
 
-function updateLikes(res,ticker){
-	Stock.findOneAndUpdate({ ticker: ticker }, { $inc: { likes: 1 } },{ new: true },
+function updateWithLiked(res, ticker, userIP){
+
+	Stock.findOneAndUpdate({ ticker: ticker }, { $inc: { likes: 1 } , $push: { uniqueIP: userIP } },{ new: true },
 	 function (err, stock) {
 			if (err) {
 				return next(err)
 			}
 			res.send(stock)
+			res.end()
 		})
-
 }
 exports.getStock = (req, res, next) => {
 	const { ticker , like } = req.query
 	let userIP = req.connection.remoteAddress.replace(/^.*:/, '')
-	let wasLiked = 0
+	let wasLiked = false
 
 	if (like == 'on'){
-		wasLiked = 1
+		wasLiked = true
 	}
-	
-	Stock.findOne({ ticker : ticker }, (err, stock) => {
+
+	Stock.find({ ticker : ticker }, (err, stock) => {
 		if (err) {
-			console.log('here')
 			return next(err)
 		}
-		if (stock == null){
+
+		if (stock.length == 0 || stock == null){
+
 			const newStock = new Stock({
       		ticker,
-      		likes : wasLiked,
-			   	userIP : [userIP]
+      		likes : 1,
+			   	uniqueIP : [userIP]
       	})
+
+			newStock.save(err => {
+				if (err) {
+			 return next(err)
+		 }
+			})
+
 			res.end('new stock added')
-		} else if (!stock.userIP.includes(userIP)){
 
-
-
+		} else if (!stock[0].uniqueIP.includes(userIP) && wasLiked == true){
+			updateWithLiked(res, ticker, userIP )
+			res.end('success')
+		} else {
 			res.end('success')
 		}
 	})
