@@ -1,0 +1,60 @@
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="/main.css" rel="stylesheet" type="text/css">
+    <title>Homepage</title>
+  </head>
+  <body>
+    <h3>Stock Price Checker</h3>
+    <div class="left-side">
+
+      <div class="single-stock-div">
+        <h5>Single Stock Search</h5>
+        <form class="sinlge-stock-form" action="/stock-price/" method="get">
+          <div class="form-group">
+            <label for="stock-input">Stock search:</label>
+            <input class="form-control" id="stock-input" type="text" name="ticker" placeholder="Search for stock*" required>
+          </div>
+          <div class="form-check checkbox-div">
+            <label class="form-check-label" for="likeCheckBox">Do you like this stock?</label>
+            <input name="like" type="checkbox" class="form-check-input" id="likeCheckBox">
+          </div>
+          <button type="submit" type="button" class="btn btn-primary">Get Single Stock</button>
+        </form>
+        <hr>
+      </div>
+
+      <div class="double-stock-div">
+        <h5>Double Stock Search</h5>
+        <form class="double-stock-form" action="/stock-prices/" method="get">
+          <div class="form-group">
+            <label for="stock-input-one">Stock A:</label>
+            <input class="form-control" id="stock-input-one" type="text" name="tickerOne" placeholder="Enter stock one*" required>
+            <label for="stock-input-two">Stock B:</label>
+            <input class="form-control" id="stock-input-two" type="text" name="tickerTwo" placeholder="Enter stock two*" required>
+          </div>
+          <div class="form-check checkbox-div">
+            <label class="form-check-label" for="likeBothCheckBox">Do you like both stocks?</label>
+            <input name="likeBoth" type="checkbox" class="form-check-input" id="likeBothCheckBox">
+          </div>
+          <button type="submit" type="button" class="btn btn-primary">Get Both Stocks</button>
+        </form>
+        <hr>
+      </div>
+
+    </div>
+    <div class="right-side">
+      <h6>Double Stock Data One:</h6>
+      <span>Symbol: <%= stocks[0].ticker %></span><br>
+      <span>Price: <%= stockPriceOne %></span><br>
+      <span>Likes: <%= diffLikes.likeOne %></span>
+      <hr>
+      <span>Symbol: <%= stocks[1].ticker %></span><br>
+      <span>Price: <%= stockPriceTwo %></span><br>
+      <span>Likes: <%= diffLikes.likeTwo %></span>
+    </div>
+  </body>
+
+</html>

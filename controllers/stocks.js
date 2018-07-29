@@ -64,11 +64,41 @@ function getTickerTwoStock(tickerTwo) {
 	return axios.get('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='+ tickerTwo + '&interval=1min&apikey='+ process.env.API_KEY)
 }
 
+function difference (firstNumber, secondNumber){
+	let theDifference = Math.abs(firstNumber - secondNumber)
+	var likeOne, likeTwo
+	if (firstNumber > secondNumber){
+		 likeOne = Math.abs(firstNumber - secondNumber)
+		 likeTwo = -Math.abs(firstNumber - secondNumber)
+	 } else if (firstNumber < secondNumber){
+		 likeOne = -Math.abs(firstNumber - secondNumber)
+		 likeTwo = Math.abs(firstNumber - secondNumber)
+	 } else {
+		 likeOne = Math.abs(firstNumber - secondNumber)
+		 likeTwo = Math.abs(firstNumber - secondNumber)
+	 }
+
+	 return ({ likeOne, likeTwo })
+}
+
+
 function combineBothTickerStocks(res, tickerOne, tickerTwo ){
 	axios.all([getTickerOneStock(tickerOne), getTickerTwoStock(tickerTwo)])
 		.then(axios.spread( (tickerOneResponse, tickerTwoResponse) => {
+			let timeSeriesStr ='Time Series (Daily)'
+			let lastRefreshed = tickerOneResponse.data['Meta Data']['3. Last Refreshed']
+			let stockPriceOne = tickerOneResponse.data[timeSeriesStr][lastRefreshed]['4. close']
+			let stockPriceTwo = tickerTwoResponse.data[timeSeriesStr][lastRefreshed]['4. close']
+			stockPriceOne = stockPriceOne.toString().slice(0, -2)
+			stockPriceTwo = stockPriceTwo.toString().slice(0, -2)
+			Stock.find({ $or: [ { ticker : tickerOne }, { ticker : tickerTwo } ] }, (err, stocks) => {
+				if (err) {
+					return next(err)
+				}
+				let diffLikes = difference(stocks[0].likes, stocks[1].likes)
 
-			res.send(tickerTwoResponse.data)
+	    res.render('double-stock', { stockPriceOne, stockPriceTwo, stocks, diffLikes })
+			})
 
 		}))
 }
