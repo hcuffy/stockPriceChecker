@@ -50,7 +50,6 @@ function retrieveSingleStockPrice(res, ticker){
 				if (err) {
 					return next(err)
 				}
-				console.log(stock)
 	    res.render('single-stock', { stockPrice, stock })
 			})
 		})
@@ -64,7 +63,6 @@ exports.getStock = (req, res, next) => {
 	if (like == 'on'){
 		wasLiked = true
 	}
-	retrieveSingleStockPrice(res, ticker)
 
 	Stock.find({ ticker : ticker }, (err, stock) => {
 		if (err) {
@@ -72,16 +70,16 @@ exports.getStock = (req, res, next) => {
 		}
 
 		if (stock.length == 0 || stock == null){
-
 			createNewStock(ticker, wasLiked , userIP)
-
-			//res.end('new stock added')
+			retrieveSingleStockPrice(res, ticker)
 
 		} else if (!stock[0].uniqueIP.includes(userIP) && wasLiked == true){
 			updateWithLiked(res, ticker, userIP )
-		//	res.end('success liked')
+			retrieveSingleStockPrice(res, ticker)
+
 		} else {
-		//	res.end('success')
+			retrieveSingleStockPrice(res, ticker)
+
 		}
 	})
 }
