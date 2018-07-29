@@ -18,7 +18,7 @@ app.use(bodyParser.json('*/*'))
 app.use(helmet.contentSecurityPolicy({
 	directives: {
 		defaultSrc: ['\'self\''],
-		styleSrc: ['\'self\'']	
+		styleSrc: ['\'self\'']
 	}
 }))
 

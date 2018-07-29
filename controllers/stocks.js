@@ -53,7 +53,6 @@ function retrieveSingleStockPrice(res, ticker){
 	    res.render('single-stock', { stockPrice, stock })
 			})
 		})
-
 }
 
 function getTickerOneStock(tickerOne) {
@@ -70,12 +69,15 @@ function difference (firstNumber, secondNumber){
 	if (firstNumber > secondNumber){
 		 likeOne = Math.abs(firstNumber - secondNumber)
 		 likeTwo = -Math.abs(firstNumber - secondNumber)
+
 	 } else if (firstNumber < secondNumber){
 		 likeOne = -Math.abs(firstNumber - secondNumber)
 		 likeTwo = Math.abs(firstNumber - secondNumber)
+
 	 } else {
 		 likeOne = Math.abs(firstNumber - secondNumber)
 		 likeTwo = Math.abs(firstNumber - secondNumber)
+
 	 }
 
 	 return ({ likeOne, likeTwo })
@@ -91,6 +93,7 @@ function combineBothTickerStocks(res, tickerOne, tickerTwo ){
 			let stockPriceTwo = tickerTwoResponse.data[timeSeriesStr][lastRefreshed]['4. close']
 			stockPriceOne = stockPriceOne.toString().slice(0, -2)
 			stockPriceTwo = stockPriceTwo.toString().slice(0, -2)
+
 			Stock.find({ $or: [ { ticker : tickerOne }, { ticker : tickerTwo } ] }, (err, stocks) => {
 				if (err) {
 					return next(err)
@@ -141,42 +144,31 @@ exports.getTwoStocks = (req, res, next) => {
 	if (likeBoth == 'on'){
 		wasLiked = true
 	}
-	combineBothTickerStocks(res,tickerOne, tickerTwo)
+
 	Stock.find({ $or: [ { ticker : tickerOne }, { ticker : tickerTwo } ] }, (err, stocks) => {
 		if (err) {
 			return next(err)
 		}
 
 		if (stocks.length == 0 || stocks == null){
-
 			createNewStock(tickerOne, wasLiked , userIP)
 			createNewStock(tickerTwo, wasLiked , userIP)
-
-
+			combineBothTickerStocks(res,tickerOne, tickerTwo)
 
 		} else if (stocks.length == 1 && !stocks[0].uniqueIP.includes(userIP) && wasLiked == true){
 			updateWithLiked(res, stocks[0].ticker, userIP )
 			let newTicker = stocks[0].ticker == tickerOne ? tickerTwo : tickerOne
 		  createNewStock(newTicker, wasLiked , userIP)
+			combineBothTickerStocks(res,tickerOne, tickerTwo)
 
 		} else if (stocks.length == 2 && !stocks[0].uniqueIP.includes(userIP) && !stocks[1].uniqueIP.includes(userIP) && wasLiked == true){
 			updateWithLiked(res, stocks[0].ticker, userIP )
 			updateWithLiked(res, stocks[1].ticker, userIP )
+			combineBothTickerStocks(res,tickerOne, tickerTwo)
 
 		} else {
-
+			combineBothTickerStocks(res,tickerOne, tickerTwo)
 
 		}
 	})
-
-	// let stock = 'FB'
-	// axios({
-	// 	method:'get',
-	// 	url: 'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol='+ stock + '&interval=1min&apikey='+ process.env.API_KEY,
-	// 	responseType:'json'
-	// })
-	// 	.then(function(response) {
-	//     	res.send(response.data)
-	// 	})
-
 }
