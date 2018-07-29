@@ -1,4 +1,4 @@
-//const axios = require('axios')
+const axios = require('axios')
 const Stock = require('../models/stock')
 
 function updateWithLiked(res, ticker, userIP, next){
@@ -35,6 +35,27 @@ function createNewStock(ticker, wasLiked , userIP){
 
 }
 
+function retrieveSingleStockPrice(res, ticker){
+	axios({
+		method:'get',
+		url: 'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='+ ticker + '&interval=1min&apikey='+ process.env.API_KEY,
+		responseType:'json'
+	})
+		.then(function(response) {
+			let timeSeriesStr ='Time Series (Daily)'
+			let lastRefreshed = response.data['Meta Data']['3. Last Refreshed']
+			let stockPrice = response.data[timeSeriesStr][lastRefreshed]['4. close']
+			stockPrice = stockPrice.toString().slice(0, -2)
+			Stock.find({ ticker : ticker }, (err, stock) => {
+				if (err) {
+					return next(err)
+				}
+				console.log(stock)
+	    res.render('single-stock', { stockPrice, stock })
+			})
+		})
+
+}
 exports.getStock = (req, res, next) => {
 	const { ticker , like } = req.query
 	let userIP = req.connection.remoteAddress.replace(/^.*:/, '')
@@ -43,6 +64,7 @@ exports.getStock = (req, res, next) => {
 	if (like == 'on'){
 		wasLiked = true
 	}
+	retrieveSingleStockPrice(res, ticker)
 
 	Stock.find({ ticker : ticker }, (err, stock) => {
 		if (err) {
@@ -53,26 +75,15 @@ exports.getStock = (req, res, next) => {
 
 			createNewStock(ticker, wasLiked , userIP)
 
-			res.end('new stock added')
+			//res.end('new stock added')
 
 		} else if (!stock[0].uniqueIP.includes(userIP) && wasLiked == true){
 			updateWithLiked(res, ticker, userIP )
-			res.end('success')
+		//	res.end('success liked')
 		} else {
-			res.end('success')
+		//	res.end('success')
 		}
 	})
-
-	// let stock = 'FB'
-	// axios({
-	// 	method:'get',
-	// 	url: 'https://www.alphavantage.co/query?function=TIME_SERIES_INTRADAY&symbol='+ stock + '&interval=1min&apikey='+ process.env.API_KEY,
-	// 	responseType:'json'
-	// })
-	// 	.then(function(response) {
-	//     	res.send(response.data)
-	// 	})
-
 }
 
 
