@@ -55,6 +55,24 @@ function retrieveSingleStockPrice(res, ticker){
 		})
 
 }
+
+function getTickerOneStock(tickerOne) {
+	return axios.get('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='+ tickerOne + '&interval=1min&apikey='+ process.env.API_KEY)
+}
+
+function getTickerTwoStock(tickerTwo) {
+	return axios.get('https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol='+ tickerTwo + '&interval=1min&apikey='+ process.env.API_KEY)
+}
+
+function combineBothTickerStocks(res, tickerOne, tickerTwo ){
+	axios.all([getTickerOneStock(tickerOne), getTickerTwoStock(tickerTwo)])
+		.then(axios.spread( (tickerOneResponse, tickerTwoResponse) => {
+
+			res.send(tickerTwoResponse.data)
+
+		}))
+}
+
 exports.getStock = (req, res, next) => {
 	const { ticker , like } = req.query
 	let userIP = req.connection.remoteAddress.replace(/^.*:/, '')
@@ -93,7 +111,7 @@ exports.getTwoStocks = (req, res, next) => {
 	if (likeBoth == 'on'){
 		wasLiked = true
 	}
-
+	combineBothTickerStocks(res,tickerOne, tickerTwo)
 	Stock.find({ $or: [ { ticker : tickerOne }, { ticker : tickerTwo } ] }, (err, stocks) => {
 		if (err) {
 			return next(err)
@@ -104,20 +122,20 @@ exports.getTwoStocks = (req, res, next) => {
 			createNewStock(tickerOne, wasLiked , userIP)
 			createNewStock(tickerTwo, wasLiked , userIP)
 
-			res.end('new stocks added')
+
 
 		} else if (stocks.length == 1 && !stocks[0].uniqueIP.includes(userIP) && wasLiked == true){
 			updateWithLiked(res, stocks[0].ticker, userIP )
 			let newTicker = stocks[0].ticker == tickerOne ? tickerTwo : tickerOne
 		  createNewStock(newTicker, wasLiked , userIP)
-			res.end('ONe new added')
+
 		} else if (stocks.length == 2 && !stocks[0].uniqueIP.includes(userIP) && !stocks[1].uniqueIP.includes(userIP) && wasLiked == true){
 			updateWithLiked(res, stocks[0].ticker, userIP )
 			updateWithLiked(res, stocks[1].ticker, userIP )
-			res.end('liked two')
+
 		} else {
 
-			res.end('nothing to add')
+
 		}
 	})
 
