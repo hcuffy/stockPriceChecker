@@ -21,7 +21,7 @@
             <label class="form-check-label" for="likeCheckBox">Do you like this stock?</label>
             <input name="like" type="checkbox" class="form-check-input" id="likeCheckBox">
           </div>
-          <button type="submit" type="button" class="btn btn-primary">Get Single Stock</button>
+          <button type="submit" class="stock-button">Get Single Stock</button>
         </form>
         <hr>
       </div>
@@ -39,21 +39,21 @@
             <label class="form-check-label" for="likeBothCheckBox">Do you like both?</label>
             <input name="likeBoth" type="checkbox" class="form-check-input" id="likeBothCheckBox">
           </div>
-          <button type="submit" type="button" class="btn btn-primary">Get Both Stocks</button>
+          <button type="submit" class="stock-button">Get Both Stocks</button>
         </form>
-        <hr>
       </div>
 
     </div>
-    <div class="right-side">
-      <h6>Double Stock Data One:</h6>
+    <div class="right-side-two">
+      <hr>
+      <h4>Double Stock Data One:</h4>
       <span>Symbol: <%= stocks[0].ticker %></span><br>
       <span>Price: <%= stockPriceOne %></span><br>
-      <span>Likes: <%= diffLikes.likeOne %></span>
-      <hr>
+      <span>Difference in Likes: <%= diffLikes.likeOne %></span><br>
+      <br>
       <span>Symbol: <%= stocks[1].ticker %></span><br>
       <span>Price: <%= stockPriceTwo %></span><br>
-      <span>Likes: <%= diffLikes.likeTwo %></span>
+      <span>Difference in Likes: <%= diffLikes.likeTwo %></span>
     </div>
   </body>
 

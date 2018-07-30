@@ -34,3 +34,9 @@ input[type=text] {
   padding-bottom: 56px;
   float: right;
 }
+
+.right-side-two {
+  width: 50%;
+  margin-top: 162px;
+  float: right;
+}
