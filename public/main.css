@@ -1,3 +1,30 @@
 body {
   background-color: #888e93;
 }
+
+.title {
+  text-align: center;
+}
+
+.stock-button {
+  background-color: #31b7d8;
+  height: 30px;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+input[type=text] {
+  height: 25px;
+  width: 130px;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.checkbox-div {
+  margin-top: 10px;
+}
+
+.left-side {
+  float: left;
+  width: 50%
+}

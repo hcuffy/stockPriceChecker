@@ -4,18 +4,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="/main.css" rel="stylesheet" type="text/css">
-    <title>Homepage</title>
+    <title>Double Stock</title>
   </head>
   <body>
-    <h3>Stock Price Checker</h3>
+    <h3 class="title">Stock Price Checker</h3>
     <div class="left-side">
 
       <div class="single-stock-div">
-        <h5>Single Stock Search</h5>
+        <h4>Single Stock Search</h4>
         <form class="sinlge-stock-form" action="/stock-price/" method="get">
           <div class="form-group">
-            <label for="stock-input">Stock search:</label>
-            <input class="form-control" id="stock-input" type="text" name="ticker" placeholder="Search for stock*" required>
+            <label for="stock-input">Stock:</label>
+            <input class="form-control" id="stock-input" type="text" name="ticker" placeholder="Enter stock*" required>
           </div>
           <div class="form-check checkbox-div">
             <label class="form-check-label" for="likeCheckBox">Do you like this stock?</label>
@@ -27,7 +27,7 @@
       </div>
 
       <div class="double-stock-div">
-        <h5>Double Stock Search</h5>
+        <h4>Double Stock Search</h4>
         <form class="double-stock-form" action="/stock-prices/" method="get">
           <div class="form-group">
             <label for="stock-input-one">Stock A:</label>
@@ -36,7 +36,7 @@
             <input class="form-control" id="stock-input-two" type="text" name="tickerTwo" placeholder="Enter stock two*" required>
           </div>
           <div class="form-check checkbox-div">
-            <label class="form-check-label" for="likeBothCheckBox">Do you like both stocks?</label>
+            <label class="form-check-label" for="likeBothCheckBox">Do you like both?</label>
             <input name="likeBoth" type="checkbox" class="form-check-input" id="likeBothCheckBox">
           </div>
           <button type="submit" type="button" class="btn btn-primary">Get Both Stocks</button>
