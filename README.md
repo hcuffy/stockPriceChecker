@@ -4,7 +4,7 @@ An application which allows users to check stock prices.
 
 Follow this README in order to properly run this application.
 
-Live App: Coming soon
+Live App: <https://natural-halibut.glitch.me/>
 
 ## Prerequisites for Local Installation.
 
