@@ -42,10 +42,8 @@ function retrieveSingleStockPrice(res, ticker){
 		responseType:'json'
 	})
 		.then(function(response) {
-			let timeSeriesStr ='Time Series (Daily)'
-			let lastRefreshed = response.data['Meta Data']['3. Last Refreshed']
-			let stockPrice = response.data[timeSeriesStr][lastRefreshed]['4. close']
-			stockPrice = stockPrice.toString().slice(0, -2)
+			let stockObject = response.data['Time Series (Daily)'][Object.keys(response.data['Time Series (Daily)'])[0]]
+			let stockPrice = stockObject[Object.keys(stockObject)[3]].toString().slice(0, -2)
 			Stock.find({ ticker : ticker }, (err, stock) => {
 				if (err) {
 					return next(err)
@@ -80,10 +78,10 @@ function difference (firstNumber, secondNumber){
 
 	 }
 
-	 return ({ likeOne, likeTwo })
+	 return ({ likeOne, likeTwo })x
 }
 
-
+// TODO: Clean up thi function. API is not playing nice
 function combineBothTickerStocks(res, tickerOne, tickerTwo ){
 	axios.all([getTickerOneStock(tickerOne), getTickerTwoStock(tickerTwo)])
 		.then(axios.spread( (tickerOneResponse, tickerTwoResponse) => {
