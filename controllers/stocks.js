@@ -15,7 +15,8 @@ function updateWithLiked(res, ticker, userIP, next){
 function createNewStock(ticker, wasLiked , userIP){
 	let addLike = 0
 	var newIP
-
+	ticker.toUpperCase()
+	
 	if (wasLiked){
 		addLike = 1
 		newIP  = userIP
@@ -78,7 +79,7 @@ function difference (firstNumber, secondNumber){
 
 	 }
 
-	 return ({ likeOne, likeTwo })x
+	 return ({ likeOne, likeTwo })
 }
 
 // TODO: Clean up thi function. API is not playing nice
