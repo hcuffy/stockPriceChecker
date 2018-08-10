@@ -2,7 +2,6 @@ const axios = require('axios')
 const Stock = require('../models/stock')
 
 function updateWithLiked(res, ticker, userIP, next){
-
 	Stock.findOneAndUpdate({ ticker: ticker }, { $inc: { likes: 1 } , $push: { uniqueIP: userIP } },{ new: true },
 	 function (err, stock) {
 			if (err) {
@@ -15,8 +14,7 @@ function updateWithLiked(res, ticker, userIP, next){
 function createNewStock(ticker, wasLiked , userIP){
 	let addLike = 0
 	var newIP
-	ticker.toUpperCase()
-	
+
 	if (wasLiked){
 		addLike = 1
 		newIP  = userIP
@@ -78,27 +76,23 @@ function difference (firstNumber, secondNumber){
 		 likeTwo = Math.abs(firstNumber - secondNumber)
 
 	 }
-
 	 return ({ likeOne, likeTwo })
 }
 
-// TODO: Clean up thi function. API is not playing nice
 function combineBothTickerStocks(res, tickerOne, tickerTwo ){
 	axios.all([getTickerOneStock(tickerOne), getTickerTwoStock(tickerTwo)])
 		.then(axios.spread( (tickerOneResponse, tickerTwoResponse) => {
-			let timeSeriesStr ='Time Series (Daily)'
-			let lastRefreshed = tickerOneResponse.data['Meta Data']['3. Last Refreshed']
-			let stockPriceOne = tickerOneResponse.data[timeSeriesStr][lastRefreshed]['4. close']
-			let stockPriceTwo = tickerTwoResponse.data[timeSeriesStr][lastRefreshed]['4. close']
-			stockPriceOne = stockPriceOne.toString().slice(0, -2)
-			stockPriceTwo = stockPriceTwo.toString().slice(0, -2)
+			let stockObject = tickerOneResponse.data['Time Series (Daily)'][Object.keys(tickerOneResponse.data['Time Series (Daily)'])[0]]
+			let stockPriceOne = stockObject[Object.keys(stockObject)[3]].toString().slice(0, -2)
+			let stockObjectTwo = tickerTwoResponse.data['Time Series (Daily)'][Object.keys(tickerTwoResponse.data['Time Series (Daily)'])[0]]
+			let stockPriceTwo = stockObjectTwo[Object.keys(stockObjectTwo)[3]].toString().slice(0, -2)
 
 			Stock.find({ $or: [ { ticker : tickerOne }, { ticker : tickerTwo } ] }, (err, stocks) => {
 				if (err) {
 					return next(err)
 				}
-				let diffLikes = difference(stocks[0].likes, stocks[1].likes)
 
+				let diffLikes = difference(stocks[0].likes, stocks[1].likes)
 	    res.render('double-stock', { stockPriceOne, stockPriceTwo, stocks, diffLikes })
 			})
 
@@ -134,12 +128,10 @@ exports.getStock = (req, res, next) => {
 	})
 }
 
-
 exports.getTwoStocks = (req, res, next) => {
 	const { tickerOne, tickerTwo, likeBoth } = req.query
 	let userIP = req.connection.remoteAddress.replace(/^.*:/, '')
 	let wasLiked = false
-
 	if (likeBoth == 'on'){
 		wasLiked = true
 	}
@@ -160,9 +152,20 @@ exports.getTwoStocks = (req, res, next) => {
 		  createNewStock(newTicker, wasLiked , userIP)
 			combineBothTickerStocks(res,tickerOne, tickerTwo)
 
-		} else if (stocks.length == 2 && !stocks[0].uniqueIP.includes(userIP) && !stocks[1].uniqueIP.includes(userIP) && wasLiked == true){
-			updateWithLiked(res, stocks[0].ticker, userIP )
-			updateWithLiked(res, stocks[1].ticker, userIP )
+		} else if (stocks.length == 1 && wasLiked == false){
+			let newTicker = stocks[0].ticker == tickerOne ? tickerTwo : tickerOne
+			createNewStock(newTicker, wasLiked , userIP)
+			combineBothTickerStocks(res,tickerOne, tickerTwo)
+
+		} else if (stocks.length == 2 && wasLiked == true){
+			if (!stocks[0].uniqueIP.includes(userIP)){
+				updateWithLiked(res, stocks[0].ticker, userIP )
+
+			}
+			if (!stocks[1].uniqueIP.includes(userIP)){
+				updateWithLiked(res, stocks[1].ticker, userIP )
+
+			}
 			combineBothTickerStocks(res,tickerOne, tickerTwo)
 
 		} else {
